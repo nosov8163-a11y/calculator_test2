@@ -3,143 +3,225 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Калькулятор для выставки Этажей</title>
+    <title>Калькулятор траншевой ипотеки</title>
     <style>
+        /* ===== Цветовая палитра ===== */
+        :root {
+            --vermilion: #CA0000;
+            --rich-gray: #1f2022;
+            --gainsboro: #DADADA;
+            --white: #FFFFFF;
+        }
+
         body {
             font-family: Arial, sans-serif;
             max-width: 1200px;
             margin: 0 auto;
             padding: 20px;
-            background-color: #fef5f5;
+            background-color: var(--white);
+            color: var(--rich-gray);
+            line-height: 1.6;
         }
+
         .calculator-container {
             display: flex;
             gap: 30px;
+            flex-wrap: wrap;
         }
-        .calculator-form {
-            flex: 1;
-            background: white;
-            padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(220, 53, 69, 0.1);
-            border: 1px solid #f8d7da;
-        }
+
+        .calculator-form,
         .calculator-results {
             flex: 1;
-            background: #fdf2f2;
+            min-width: 300px;
+            background: var(--white);
             padding: 30px;
             border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(220, 53, 69, 0.1);
-            border: 1px solid #f8d7da;
+            box-shadow: 0 2px 10px rgba(202, 0, 0, 0.1);
+            border: 1px solid var(--gainsboro);
         }
+
         .form-group {
             margin-bottom: 20px;
         }
+
         label {
             display: block;
             margin-bottom: 5px;
             font-weight: bold;
-            color: #721c24;
+            color: var(--rich-gray);
         }
-        select, input[type="number"] {
+
+        select, input[type="range"], input[type="number"], input[type="month"] {
             width: 100%;
             padding: 8px;
-            border: 1px solid #dc3545;
+            border: 1px solid var(--gainsboro);
             border-radius: 4px;
             margin-bottom: 10px;
+            background-color: var(--white);
+            color: var(--rich-gray);
         }
+
+        .value-display {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 5px;
+        }
+
         .result-item {
             display: flex;
             justify-content: space-between;
             margin-bottom: 15px;
             padding: 10px 0;
-            border-bottom: 1px solid #dc3545;
+            border-bottom: 1px solid var(--gainsboro);
         }
+
         .highlight {
             font-size: 1.2em;
             font-weight: bold;
-            color: #c82333;
+            color: var(--vermilion);
         }
+
         .price-comparison {
             display: flex;
             justify-content: space-between;
             margin: 15px 0;
             padding: 10px;
-            background: #f8d7da;
+            background: var(--white);
             border-radius: 5px;
+            border: 1px solid var(--gainsboro);
         }
+
         .discount {
-            color: #28a745;
+            color: var(--vermilion);
             font-weight: bold;
         }
-        .no-discount {
-            color: #6c757d;
-            font-weight: bold;
-        }
+
         .warning {
-            color: #dc3545;
+            color: var(--vermilion);
             font-weight: bold;
         }
-        .info {
-            color: #17a2b8;
+
+        .success {
+            color: var(--vermilion);
             font-weight: bold;
         }
+
+        .input-with-slider {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .manual-input {
+            width: 150px;
+        }
+
         .apartment-info {
-            background: #fff3cd;
+            background: var(--white);
             padding: 10px;
             border-radius: 5px;
             margin: 10px 0;
+            border: 1px solid var(--gainsboro);
         }
+
         .sold-notice {
-            background: #f8d7da;
-            color: #721c24;
+            background: var(--white);
+            color: var(--vermilion);
             padding: 10px;
             border-radius: 5px;
             margin: 10px 0;
             text-align: center;
             font-weight: bold;
+            border: 1px solid var(--vermilion);
         }
+
         .checkbox-group {
             display: flex;
             align-items: center;
             gap: 10px;
             margin: 15px 0;
         }
-        .floors-discount {
-            background: #f8d7da;
+
+        .options-container {
+            background: var(--white);
             padding: 10px;
             border-radius: 5px;
             margin: 10px 0;
+            border: 1px solid var(--gainsboro);
         }
-        .bank-discount {
-            background: #d1ecf1;
+
+        .options-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
             padding: 10px;
+            background: var(--vermilion);
+            color: var(--white);
             border-radius: 5px;
-            margin: 10px 0;
+            margin-bottom: 10px;
         }
+
+        .options-header h3 {
+            margin: 0;
+            font-size: 16px;
+            color: var(--white);
+        }
+
+        .options-content {
+            display: none;
+            padding: 10px;
+            background: var(--white);
+            border-radius: 5px;
+            margin-top: 10px;
+        }
+
+        .options-content.active {
+            display: block;
+        }
+
+        .options-toggle {
+            font-size: 20px;
+            font-weight: bold;
+            transition: transform 0.3s;
+            color: var(--white);
+        }
+
+        .options-toggle.active {
+            transform: rotate(45deg);
+        }
+
         .apartment-details {
             margin-top: 20px;
             padding: 15px;
-            background: #f8d7da;
+            background: var(--white);
             border-radius: 5px;
+            border: 1px solid var(--gainsboro);
         }
+
         .apartment-details h3 {
             margin-top: 0;
-            color: #721c24;
+            color: var(--rich-gray);
         }
+
         .apartment-details div {
             margin-bottom: 5px;
         }
-        h2 {
+
+        .info-text {
+            font-size: 0.9em;
+            color: #666666;
+            margin-top: 5px;
+        }
+
+        h2, h3 {
             margin-top: 0;
-            color: #721c24;
+            color: var(--rich-gray);
         }
-        h1 {
-            color: #721c24;
-        }
+
         .plan-button {
-            background-color: #dc3545;
-            color: white;
+            background-color: var(--vermilion);
+            color: var(--white);
             border: none;
             padding: 8px 15px;
             border-radius: 4px;
@@ -149,39 +231,304 @@
             text-decoration: none;
             display: inline-block;
         }
+
         .plan-button:hover {
-            background-color: #c82333;
+            background-color: #a50000;
         }
+
         .plan-button:disabled {
-            background-color: #6c757d;
+            background-color: #999999;
             cursor: not-allowed;
         }
-        .additional-costs {
-            background: #d1ecf1;
-            padding: 15px;
-            border-radius: 5px;
-            margin: 15px 0;
-        }
-        .payment-warning {
-            background: #f8d7da;
-            color: #721c24;
+
+        .realtor-discount {
+            background: var(--white);
             padding: 10px;
             border-radius: 5px;
             margin: 10px 0;
-            text-align: center;
-            font-weight: bold;
+            display: none;
+            border: 1px solid var(--gainsboro);
         }
+
+        .additional-costs {
+            background: var(--white);
+            padding: 15px;
+            border-radius: 5px;
+            margin: 15px 0;
+            border: 1px solid var(--gainsboro);
+        }
+
+        /* === Единый стиль для блоков "Параметры ипотеки" и "Транши кредита" === */
+        .mortgage-settings,
+        .tranches-container {
+            background: var(--white);
+            padding: 15px;
+            border-radius: 5px;
+            margin: 15px 0;
+            border: 1px solid var(--gainsboro);
+        }
+
+.mortgage-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+}
+
+.mortgage-grid .form-group {
+    min-width: 0;
+}
+
+.mortgage-grid label {
+    white-space: normal;
+    word-break: break-word;
+}
+
+.mortgage-grid input {
+    box-sizing: border-box;
+    width: 100%;
+}
+
+        .mortgage-info {
+            background: var(--white);
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+            border-left: 4px solid var(--vermilion);
+        }
+
+        .payment-schedule-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+            font-size: 0.9em;
+        }
+
+        .payment-schedule-table th,
+        .payment-schedule-table td {
+            border: 1px solid var(--gainsboro);
+            padding: 8px;
+            text-align: right;
+        }
+
+        .payment-schedule-table th {
+            background-color: var(--white);
+            text-align: center;
+        }
+
+        .payment-schedule-table td:first-child {
+            text-align: center;
+        }
+
+        .balance-warning {
+            background-color: var(--white);
+            border-left: 4px solid var(--vermilion);
+            padding: 10px;
+            margin: 10px 0;
+            font-size: 0.9em;
+        }
+
+        .effective-financing {
+            background: var(--white);
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 20px;
+            border-left: 4px solid var(--vermilion);
+        }
+
         @media (max-width: 768px) {
             .calculator-container {
                 flex-direction: column;
             }
+            .mortgage-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        input[type="range"] {
+            -webkit-appearance: none;
+            height: 8px;
+            border-radius: 5px;
+            background: #e0e0e0;
+            outline: none;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: var(--vermilion);
+            cursor: pointer;
+        }
+
+        input[type="range"]::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: var(--vermilion);
+            cursor: pointer;
+        }
+
+        select:focus, input[type="number"]:focus, input[type="range"]:focus, input[type="month"]:focus {
+            outline: none;
+            border-color: var(--vermilion);
+            box-shadow: 0 0 0 2px rgba(202, 0, 0, 0.1);
+        }
+
+        .explanation {
+            background: var(--white);
+            padding: 20px;
+            border-radius: 5px;
+            margin: 20px 0;
+            border: 1px solid var(--gainsboro);
+        }
+
+        .explanation h3 {
+            color: var(--rich-gray);
+            margin-top: 0;
+        }
+
+        .explanation ol {
+            margin-left: 20px;
+        }
+
+        .explanation li {
+            margin-bottom: 10px;
+        }
+
+        /* === Транши с выбором единиц === */
+        .tranche-item {
+            display: grid;
+            grid-template-columns: 30px 1fr 40px;
+            gap: 10px;
+            align-items: start;
+            margin-bottom: 15px;
+            padding: 10px;
+            background: var(--white);
+            border-radius: 5px;
+            border: 1px solid var(--gainsboro);
+        }
+
+        .tranche-number {
+            font-weight: bold;
+            color: var(--vermilion);
+            text-align: center;
+            padding-top: 8px;
+        }
+
+        .tranche-inputs {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .tranche-amount-row {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            flex-wrap: wrap;
+        }
+
+        .tranche-amount-input {
+            flex: 1;
+            min-width: 120px;
+        }
+
+        .tranche-unit-select {
+            width: 70px;
+            padding: 8px;
+            border: 1px solid var(--gainsboro);
+            border-radius: 4px;
+            background-color: var(--white);
+        }
+
+        .tranche-equivalent {
+            font-size: 0.85em;
+            color: #666;
+            margin-left: 5px;
+            white-space: nowrap;
+        }
+
+        .tranche-month-input {
+            width: 100%;
+        }
+
+        .remove-tranche {
+            background: var(--vermilion);
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            height: fit-content;
+        }
+
+        .remove-tranche:hover {
+            background: #a50000;
+        }
+
+        .add-tranche-btn {
+            background-color: var(--vermilion);
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            margin-top: 10px;
+        }
+
+        .add-tranche-btn:hover {
+            background-color: #a50000;
+        }
+
+        .add-tranche-btn:disabled {
+            background-color: #999999;
+            cursor: not-allowed;
+        }
+
+        /* === Кнопки выбора режима траншей === */
+        .tranche-mode-buttons {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .tranche-mode-btn {
+            background-color: var(--white);
+            color: var(--vermilion);
+            border: 1px solid var(--vermilion);
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+
+        .tranche-mode-btn:hover {
+            background-color: var(--vermilion);
+            color: var(--white);
+        }
+
+        .tranche-mode-btn.active {
+            background-color: var(--vermilion);
+            color: var(--white);
+        }
+
+        /* Скрываем таблицу, оставляем только сообщения */
+        #paymentScheduleTable {
+            display: none;
         }
     </style>
 </head>
 <body>
+
     <div class="calculator-container">
         <div class="calculator-form">
-            <h1>Калькулятор для выставки Этажей</h1>
+            <h1>Калькулятор траншевой ипотеки</h1>
 
             <!-- Выбор квартиры -->
             <div class="form-group">
@@ -190,118 +537,194 @@
                     <option value="">Загрузка...</option>
                 </select>
             </div>
-
             <div class="form-group">
                 <label for="sectionSelect">Название дома:</label>
                 <select id="sectionSelect" disabled>
                     <option value="">Сначала выберите ЖК</option>
                 </select>
             </div>
-
             <div class="form-group">
                 <label for="apartmentSelect">Квартира:</label>
                 <select id="apartmentSelect" disabled>
                     <option value="">Сначала выберите дом</option>
                 </select>
             </div>
-
             <div id="selectedApartmentInfo" class="apartment-info" style="display: none;">
                 <strong>Выбранная квартира:</strong>
                 <div id="apartmentDetails"></div>
             </div>
-
             <div id="soldNotice" class="sold-notice" style="display: none;">
                 Эта квартира уже продана
             </div>
 
-            <!-- Убрана цена со скидкой из отображения -->
+            <!-- Цены и максимальный дисконт -->
             <div class="price-comparison">
                 <div>
-                    <strong>Цена квартиры:</strong><br>
+                    <strong>Базовая цена:</strong><br>
                     <span id="basePriceDisplay">0 ₽</span>
                 </div>
-            </div>
-            
-            <div class="floors-discount">
-                <div class="checkbox-group">
-                    <input type="checkbox" id="floorsDiscount">
-                    <label for="floorsDiscount">Скидка для Этажей</label>
-                </div>
-                <div style="font-size: 0.9em; color: #721c24;">
-                    При включенной скидке для Этажей цена уменьшается на 200,000 ₽
+                <div>
+                    <strong>Цена с макс. дисконтом (20%):</strong><br>
+                    <span class="discount" id="maxDiscountPriceDisplay">0 ₽</span>
                 </div>
             </div>
             
-            <div class="bank-discount">
-                <div class="checkbox-group">
-                    <input type="checkbox" id="bankDiscount">
-                    <label for="bankDiscount">для Альфа Банка</label>
+            <!-- Опции (скидки) -->
+            <div class="options-container">
+                <div class="options-header" id="optionsToggle">
+                    <h3>Опции</h3>
+                    <span class="options-toggle" id="optionsToggleIcon">+</span>
                 </div>
-                <div style="font-size: 0.9em; color: #17a2b8;">
-                    При включении добавляется комиссия банка 4,3% от тела кредита
+                <div class="options-content" id="optionsContent">
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="managerDiscount">
+                        <label for="managerDiscount">Скидка менеджера</label>
+                    </div>
+                    <div class="info-text">
+                        При включенной скидке менеджера цена уменьшается на 100 000 ₽
+                    </div>
+                    <div id="realtorDiscountContainer" class="realtor-discount">
+                        <div class="checkbox-group">
+                            <input type="checkbox" id="realtorDiscount">
+                            <label for="realtorDiscount">Скидка риелтора</label>
+                        </div>
+                        <div class="info-text">
+                            При включенной скидке риелтора цена уменьшается на 100 000 ₽ (только для ЖК "ЧИСТЫЕ ПРУДЫ")
+                        </div>
+                    </div>
                 </div>
             </div>
             
-            <!-- Дополнительные расходы -->
+            <!-- Срок до ввода дома -->
+            <div class="form-group">
+                <label for="completionDate">Планируемый срок ввода дома:</label>
+                <input type="month" id="completionDate" min="2026-03" value="2026-12">
+                <div id="completionInfo" class="info-text">Крайний срок последнего транша: за 3 месяца до ввода</div>
+            </div>
+            
+            <!-- Дополнительные затраты -->
             <div class="additional-costs">
                 <div class="form-group">
                     <label for="repairCost">Цена ремонта (₽):</label>
                     <input type="number" id="repairCost" value="0" min="0" step="10000">
                 </div>
-                
                 <div class="form-group">
-                    <label for="dduObjects">Объекты, зашитые в ДДУ (₽):</label>
-                    <input type="number" id="dduObjects" value="0" min="0" step="10000">
+                    <label for="dduObjectsCost">Объекты, зашитые в ДДУ (₽):</label>
+                    <input type="number" id="dduObjectsCost" value="0" min="0" step="10000">
                 </div>
             </div>
             
-            <!-- Первоначальный взнос клиента -->
+            <!-- Первоначальный взнос -->
             <div class="form-group">
-                <label for="clientDownPayment">Первоначальный взнос клиента (₽):</label>
-                <input type="number" id="clientDownPayment" value="0" min="0" step="10000">
-                <div id="minPaymentInfo" class="min-payment-info"></div>
+                <label for="downPayment">Первоначальный взнос (ПВ):</label>
+                <div class="input-with-slider">
+                    <input type="number" id="downPaymentManualRub" class="manual-input" value="0" min="0" step="10000">
+                    <span>₽</span>
+                </div>
+                <input type="range" id="downPayment" min="15" max="50" value="20" step="1">
+                <div class="value-display">
+                    <span>15%</span>
+                    <span id="downPaymentValue">20%</span>
+                    <span>50%</span>
+                </div>
+                <div id="downPaymentAmount">0 ₽</div>
+                <div class="info-text">Рекомендуется 15–30% от стоимости жилья</div>
             </div>
             
-            <div id="paymentWarning" class="payment-warning" style="display: none;">
-                Первоначальный взнос клиента меньше минимального требуемого!
+            <!-- Параметры ипотеки -->
+            <div class="mortgage-settings">
+                <h3>Параметры ипотеки</h3>
+                <div class="mortgage-grid">
+                    <div class="form-group">
+                        <label for="mortgageRate">Процентная ставка:</label>
+                        <input type="number" id="mortgageRate" value="21.7" min="0.1" max="30" step="0.1">
+                    </div>
+                    <div class="form-group">
+                        <label for="mortgageTerm">Срок кредита (лет):</label>
+                        <input type="number" id="mortgageTerm" value="30" min="1" max="30" step="1">
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Транши кредита -->
+            <div class="tranches-container">
+                <h3>Транши кредита</h3>
+                
+                <!-- Кнопки выбора режима -->
+                <div class="tranche-mode-buttons">
+                    <button id="manualModeBtn" class="tranche-mode-btn active">Ручной ввод</button>
+                    <button id="program1Btn" class="tranche-mode-btn">Программа 1</button>
+                    <button id="program2Btn" class="tranche-mode-btn">Программа 2</button>
+                </div>
+                
+                <div id="tranchesList"></div>
+                <button id="addTrancheBtn" class="add-tranche-btn" disabled>+ Добавить транш</button>
+                <div class="info-text">
+                    Максимум 3 транша.<br>
+                    <span id="trancheBalanceWarning" class="balance-warning" style="display: none;"></span>
+                </div>
+            </div>
+            
+            <!-- Эффективное финансирование -->
+            <div class="effective-financing">
+                <strong>💰 Эффективное финансирование (первые 6 месяцев):</strong><br>
+                <span style="font-size: 1.2em; font-weight: bold;" id="effectiveFinancingAmount">0 ₽</span>
+                <span id="effectiveFinancingPercent">(0% от стоимости)</span>
             </div>
         </div>
         
         <div class="calculator-results">
-            <h2>Результаты расчета:</h2>
+            <h2>Результаты</h2>
+            
             <div class="result-item">
-                <span>Стоимость договора для ДДУ:</span>
-                <span id="resultContractPrice" class="highlight">0 ₽</span>
+                <span>Дисконт застройщика:</span>
+                <span id="resultDeveloperDiscount" class="discount">0 ₽ (0%)</span>
             </div>
             <div class="result-item">
-                <span>Общий ПВ:</span>
-                <span id="resultTotalPV" class="highlight">0 ₽</span>
+                <span>Итоговая цена квартиры:</span>
+                <span id="resultFinalPrice" class="highlight">0 ₽</span>
             </div>
             <div class="result-item">
-                <span>Паритет ПВ:</span>
-                <span id="resultCompanyPV" class="highlight">0 ₽</span>
+                <span>Ремонт + объекты в ДДУ:</span>
+                <span id="resultAdditionalCosts">0 ₽</span>
             </div>
             <div class="result-item">
-                <span>Клиента ПВ:</span>
-                <span id="resultClientPV" class="highlight">0 ₽</span>
+                <span>Общая стоимость сделки:</span>
+                <span id="resultTotalCost" class="highlight">0 ₽</span>
             </div>
             <div class="result-item">
-                <span>Тело кредита:</span>
-                <span id="resultLoanBody" class="highlight">0 ₽</span>
+                <span>Первоначальный взнос (ПВ):</span>
+                <span id="resultDownPayment" class="highlight">0 ₽</span>
             </div>
             <div class="result-item">
-                <span>Процент ПВ:</span>
-                <span id="resultPVPercent" class="highlight">0%</span>
-            </div>
-            <div id="bankCommissionItem" class="result-item" style="display: none;">
-                <span>Комиссия банка (4,3%):</span>
-                <span id="resultBankCommission" class="info">0 ₽</span>
+                <span>Сумма кредита (общая):</span>
+                <span id="resultMortgageAmount" class="highlight">0 ₽</span>
             </div>
             <div class="result-item">
-                <span>Скидка на квартиру без учета ремонта:</span>
-                <span id="resultDiscountWithoutRepair" class="no-discount">Нет скидки</span>
+                <span>Сумма всех траншей:</span>
+                <span id="resultTotalTranches">0 ₽</span>
             </div>
             
+            <div style="margin-top: 30px;">
+                <h3>График платежей по траншам</h3>
+                <!-- Таблица скрыта через CSS, данные выводятся в div ниже -->
+                <table class="payment-schedule-table" id="paymentScheduleTable">
+                    <thead>
+                        <tr>
+                            <th>Период</th>
+                            <th>Сумма долга на начало</th>
+                            <th>Ежемесячный платёж</th>
+                            <th>Кол-во месяцев</th>
+                            <th>Остаток долга</th>
+                        </tr>
+                    </thead>
+                    <tbody id="paymentScheduleBody"></tbody>
+                </table>
+                <!-- Новый контейнер для сообщений -->
+                <div id="paymentScheduleMessages" style="margin-top: 10px;"></div>
+            </div>
+            
+          
             <div id="apartmentFullDetails" class="apartment-details" style="display: none;">
                 <h3>Информация о квартире:</h3>
                 <div id="apartmentComplex"></div>
@@ -315,7 +738,7 @@
     </div>
 
     <script>
-        // Элементы DOM
+        // ========== Элементы DOM ==========
         const complexSelect = document.getElementById('complexSelect');
         const sectionSelect = document.getElementById('sectionSelect');
         const apartmentSelect = document.getElementById('apartmentSelect');
@@ -323,41 +746,65 @@
         const apartmentDetails = document.getElementById('apartmentDetails');
         const soldNotice = document.getElementById('soldNotice');
         const basePriceDisplay = document.getElementById('basePriceDisplay');
-        const floorsDiscountCheckbox = document.getElementById('floorsDiscount');
-        const bankDiscountCheckbox = document.getElementById('bankDiscount');
+        const maxDiscountPriceDisplay = document.getElementById('maxDiscountPriceDisplay');
+        const managerDiscountCheckbox = document.getElementById('managerDiscount');
+        const realtorDiscountContainer = document.getElementById('realtorDiscountContainer');
+        const realtorDiscountCheckbox = document.getElementById('realtorDiscount');
+        const optionsToggle = document.getElementById('optionsToggle');
+        const optionsToggleIcon = document.getElementById('optionsToggleIcon');
+        const optionsContent = document.getElementById('optionsContent');
         const repairCostInput = document.getElementById('repairCost');
-        const dduObjectsInput = document.getElementById('dduObjects');
-        const clientDownPaymentInput = document.getElementById('clientDownPayment');
-        const minPaymentInfo = document.getElementById('minPaymentInfo');
-        const paymentWarning = document.getElementById('paymentWarning');
-        const apartmentFullDetails = document.getElementById('apartmentFullDetails');
+        const dduObjectsCostInput = document.getElementById('dduObjectsCost');
+        const completionDateInput = document.getElementById('completionDate');
+        const completionInfo = document.getElementById('completionInfo');
+        const downPaymentSlider = document.getElementById('downPayment');
+        const downPaymentManualRub = document.getElementById('downPaymentManualRub');
+        const downPaymentValue = document.getElementById('downPaymentValue');
+        const downPaymentAmount = document.getElementById('downPaymentAmount');
+        const mortgageRateInput = document.getElementById('mortgageRate');
+        const mortgageTermInput = document.getElementById('mortgageTerm');
+        const tranchesList = document.getElementById('tranchesList');
+        const addTrancheBtn = document.getElementById('addTrancheBtn');
+        const effectiveFinancingAmount = document.getElementById('effectiveFinancingAmount');
+        const effectiveFinancingPercent = document.getElementById('effectiveFinancingPercent');
+        const trancheBalanceWarning = document.getElementById('trancheBalanceWarning');
+        
+        // Кнопки режимов траншей
+        const manualModeBtn = document.getElementById('manualModeBtn');
+        const program1Btn = document.getElementById('program1Btn');
+        const program2Btn = document.getElementById('program2Btn');
         
         // Результаты
-        const resultContractPrice = document.getElementById('resultContractPrice');
-        const resultTotalPV = document.getElementById('resultTotalPV');
-        const resultCompanyPV = document.getElementById('resultCompanyPV');
-        const resultClientPV = document.getElementById('resultClientPV');
-        const resultLoanBody = document.getElementById('resultLoanBody');
-        const resultPVPercent = document.getElementById('resultPVPercent');
-        const bankCommissionItem = document.getElementById('bankCommissionItem');
-        const resultBankCommission = document.getElementById('resultBankCommission');
-        const resultDiscountWithoutRepair = document.getElementById('resultDiscountWithoutRepair');
+        const resultDeveloperDiscount = document.getElementById('resultDeveloperDiscount');
+        const resultFinalPrice = document.getElementById('resultFinalPrice');
+        const resultAdditionalCosts = document.getElementById('resultAdditionalCosts');
+        const resultTotalCost = document.getElementById('resultTotalCost');
+        const resultDownPayment = document.getElementById('resultDownPayment');
+        const resultMortgageAmount = document.getElementById('resultMortgageAmount');
+        const resultTotalTranches = document.getElementById('resultTotalTranches');
+        const resultTotalPayments = document.getElementById('resultTotalPayments');
+        const resultOverpayment = document.getElementById('resultOverpayment');
         
-        // Информация о квартире
+        // Детали квартиры
         const apartmentComplex = document.getElementById('apartmentComplex');
         const apartmentSection = document.getElementById('apartmentSection');
         const apartmentNumber = document.getElementById('apartmentNumber');
         const apartmentRooms = document.getElementById('apartmentRooms');
         const apartmentArea = document.getElementById('apartmentArea');
         const apartmentPlan = document.getElementById('apartmentPlan');
+        const apartmentFullDetails = document.getElementById('apartmentFullDetails');
+        
+        // Тело таблицы графика
+        const paymentScheduleBody = document.getElementById('paymentScheduleBody');
+        // Контейнер для сообщений
+        const paymentScheduleMessages = document.getElementById('paymentScheduleMessages');
 
-        // Данные из Google Таблицы
+        // ========== Данные ==========
         let apartmentsData = [];
         const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwVMdD1qLq8N3hBj1OV-xVXz5T9wwOcDTPSa09j5Ty7kxm7YY1SErU5fXkoqWxO2zZ2/exec';
 
-        // Текущие цены выбранной квартиры
+        // Текущая выбранная квартира
         let currentBasePrice = 0;
-        let currentDiscountPrice = 0;
         let currentStatus = '';
         let currentComplex = '';
         let currentSection = '';
@@ -365,131 +812,672 @@
         let currentRoomType = '';
         let currentArea = '';
         let currentPlanUrl = '';
-
-        // Коэффициенты для расчета минимального ПВ
-        const coefficients = {
-            'АСТРО': [
-                { max: 5000000, value: 0.10 },
-                { max: 8000000, value: 0.12 },
-                { max: 12000000, value: 0.15 }
-            ],
-            'ЧИСТЫЕ ПРУДЫ': [
-                { max: 5000000, value: 0.095 },
-                { max: 8000000, value: 0.105 },
-                { max: 14000000, value: 0.135 }
-            ],
-            'Счастье': [
-                { max: 2000000, value: 0.065 },
-                { max: 3500000, value: 0.09 },
-                { max: 6500000, value: 0.11 }
-            ],
-            'Тёплые кварталы': [
-                { max: 5000000, value: 0.105 },
-                { max: 8000000, value: 0.125 },
-                { max: 14000000, value: 0.145 }
-            ],
-            'Бодровский': [
-                { max: 5000000, value: 0.10 },
-                { max: 8000000, value: 0.12 },
-                { max: 14000000, value: 0.14 }
-            ],
-            'Комсомольский': [
-                { max: 5000000, value: 0.10 },
-                { max: 8000000, value: 0.12 },
-                { max: 14000000, value: 0.14 }
-            ]
+        
+        // Транши
+        let tranches = [];
+        let trancheCounter = 0;
+        
+        // Параметры программы
+        const TRANSCHE_PARAMS = {
+            MAX_TRANCHES: 3,
+            MAX_DISCOUNT_PERCENT: 20,
+            EFFECTIVE_PERIOD_MONTHS: 6,
+            MIN_MONTHS_BEFORE_COMPLETION: 3
+        };
+        const TRANSCHE_UNITS = {
+            RUB: 'rub',
+            PERCENT: 'percent'
         };
 
-        // ЖК с фиксированным минимальным ПВ 300 000 ₽
-        const fixedMinPaymentComplexes = ['Бодровский', 'Комсомольский', 'ЧИСТЫЕ ПРУДЫ'];
-        const FIXED_MIN_PAYMENT = 300000;
-
-        // Комиссия банка
-        const BANK_COMMISSION_RATE = 0.043; // 4.3%
-
-        // Функция для получения типа комнатности в текстовом формате
+        // ========== Вспомогательные функции ==========
         function getRoomTypeText(roomType) {
-            const roomTypes = {
-                0: 'Студия',
-                1: '1-комнатная',
-                2: '2-комнатная',
-                3: '3-комнатная'
-            };
-            return roomTypes[roomType] || 'Неизвестно';
+            const types = {0: 'Студия', 1: '1-комнатная', 2: '2-комнатная', 3: '3-комнатная'};
+            return types[roomType] || 'Неизвестно';
         }
 
-        // Функция для получения коэффициента для ЖК
-        function getCoefficient(complex, basePrice) {
-            const complexCoeffs = coefficients[complex];
-            if (!complexCoeffs) return 0.10; // По умолчанию 10%
+        function formatMoney(amount) {
+            return new Intl.NumberFormat('ru-RU').format(Math.round(amount)) + ' ₽';
+        }
+
+        function formatDate(dateStr) {
+            if (!dateStr) return '';
+            const d = new Date(dateStr);
+            const months = ['янв', 'фев', 'мар', 'апр', 'май', 'июн', 'июл', 'авг', 'сен', 'окт', 'ноя', 'дек'];
+            return `${months[d.getMonth()]} ${d.getFullYear()}`;
+        }
+
+        function calculateMaxDiscountPrice(basePrice) {
+            return Math.round(basePrice * (1 - TRANSCHE_PARAMS.MAX_DISCOUNT_PERCENT / 100));
+        }
+
+        function getAdditionalDiscountsSum() {
+            let sum = 0;
+            if (managerDiscountCheckbox.checked) sum += 100000;
+            if (currentComplex === 'ЧИСТЫЕ ПРУДЫ' && realtorDiscountCheckbox.checked) sum += 100000;
+            return sum;
+        }
+
+        function calculateEffectiveFinancing(downPayment, tranches) {
+            let sum = downPayment;
+            tranches.forEach(t => {
+                if (t.month <= TRANSCHE_PARAMS.EFFECTIVE_PERIOD_MONTHS) sum += t.amount;
+            });
+            return sum;
+        }
+
+        function totalTranchesAmount(tranches) {
+            return tranches.reduce((s, t) => s + t.amount, 0);
+        }
+
+        function monthlyRate(annualRate) {
+            return annualRate / 100 / 12;
+        }
+
+        function annuityPayment(principal, months, rateMonthly) {
+            if (principal <= 0 || months <= 0) return 0;
+            if (rateMonthly === 0) return principal / months;
+            const factor = Math.pow(1 + rateMonthly, months);
+            return principal * rateMonthly * factor / (factor - 1);
+        }
+
+        function remainingBalance(principal, months, rateMonthly, paymentsMade) {
+            if (paymentsMade >= months) return 0;
+            if (rateMonthly === 0) return principal * (1 - paymentsMade / months);
+            const factor = Math.pow(1 + rateMonthly, months);
+            const factorPaid = Math.pow(1 + rateMonthly, paymentsMade);
+            return principal * (factor - factorPaid) / (factor - 1);
+        }
+
+        function getMaxTrancheMonth() {
+            const completion = new Date(completionDateInput.value);
+            const today = new Date();
+            const monthsToCompletion = (completion.getFullYear() - today.getFullYear()) * 12 + (completion.getMonth() - today.getMonth());
+            return Math.max(1, monthsToCompletion - TRANSCHE_PARAMS.MIN_MONTHS_BEFORE_COMPLETION);
+        }
+
+        function updateCompletionInfo() {
+            const maxMonth = getMaxTrancheMonth();
+            completionInfo.textContent = `Крайний срок последнего транша: месяц ${maxMonth} (за 3 месяца до ввода)`;
+            document.querySelectorAll('.tranche-month-input').forEach(input => {
+                input.max = maxMonth;
+            });
+        }
+
+        // ========== Управление атрибутами поля ввода в зависимости от единиц ==========
+        function configureAmountInput(inputElement, unit) {
+            if (unit === TRANSCHE_UNITS.PERCENT) {
+                inputElement.step = '0.1';
+                inputElement.min = '0';
+                inputElement.placeholder = 'Процент';
+            } else {
+                inputElement.step = '10000';
+                inputElement.min = '0';
+                inputElement.placeholder = 'Сумма, ₽';
+            }
+        }
+
+        // ========== Управление траншами ==========
+        function addTranche(initialValue, month, unit = TRANSCHE_UNITS.RUB, skipUpdate = false) {
+            if (tranches.length >= TRANSCHE_PARAMS.MAX_TRANCHES) {
+                alert(`Максимум ${TRANSCHE_PARAMS.MAX_TRANCHES} транша`);
+                return;
+            }
+            trancheCounter++;
+            const id = `tranche_${trancheCounter}`;
+            const item = document.createElement('div');
+            item.className = 'tranche-item';
+            item.id = id;
             
-            for (let i = 0; i < complexCoeffs.length; i++) {
-                if (basePrice <= complexCoeffs[i].max) {
-                    return complexCoeffs[i].value;
+            const maxMonth = getMaxTrancheMonth();
+            const monthValue = Math.min(month, maxMonth);
+            
+            item.innerHTML = `
+                <div class="tranche-number">${trancheCounter}</div>
+                <div class="tranche-inputs">
+                    <div class="tranche-amount-row">
+                        <input type="number" class="tranche-amount-input" value="${initialValue}" data-id="${id}" placeholder="Сумма, ₽">
+                        <select class="tranche-unit-select" data-id="${id}">
+                            <option value="${TRANSCHE_UNITS.RUB}" ${unit === TRANSCHE_UNITS.RUB ? 'selected' : ''}>₽</option>
+                            <option value="${TRANSCHE_UNITS.PERCENT}" ${unit === TRANSCHE_UNITS.PERCENT ? 'selected' : ''}>%</option>
+                        </select>
+                        <span class="tranche-equivalent"></span>
+                    </div>
+                    <div>
+                        <label style="display:block; font-size:0.9em; margin-bottom:3px;">Месяц выдачи</label>
+                        <input type="number" class="tranche-month-input" value="${monthValue}" min="1" max="${maxMonth}" step="1" data-id="${id}">
+                    </div>
+                </div>
+                <button class="remove-tranche" data-id="${id}">×</button>
+            `;
+            
+            tranchesList.appendChild(item);
+            
+            const amountInput = item.querySelector('.tranche-amount-input');
+            const unitSelect = item.querySelector('.tranche-unit-select');
+            const monthInput = item.querySelector('.tranche-month-input');
+            
+            configureAmountInput(amountInput, unit);
+            
+            amountInput.addEventListener('input', updateTranches);
+            monthInput.addEventListener('input', updateTranches);
+            unitSelect.addEventListener('change', function(e) {
+                configureAmountInput(amountInput, unitSelect.value);
+                updateTranches();
+            });
+            item.querySelector('.remove-tranche').addEventListener('click', () => removeTranche(id));
+            
+            if (!skipUpdate) {
+                updateTranches();
+                updateAddTrancheButton();
+            }
+        }
+
+        function removeTranche(id) {
+            const el = document.getElementById(id);
+            if (el) el.remove();
+            updateTranches();
+            updateAddTrancheButton();
+            calculate();
+        }
+
+        function clearAllTranches() {
+            while (tranchesList.firstChild) tranchesList.firstChild.remove();
+            tranches = [];
+            trancheCounter = 0;
+        }
+
+        function updateTranches() {
+            const items = tranchesList.querySelectorAll('.tranche-item');
+            tranches = [];
+            items.forEach((item, idx) => {
+                const amountInput = item.querySelector('.tranche-amount-input');
+                const unitSelect = item.querySelector('.tranche-unit-select');
+                const monthInput = item.querySelector('.tranche-month-input');
+                
+                let rawValue = parseFloat(amountInput.value) || 0;
+                if (rawValue < 0) rawValue = 0;
+                
+                const unit = unitSelect.value;
+                const month = parseInt(monthInput.value) || 1;
+                
+                tranches.push({
+                    id: item.id,
+                    rawValue: rawValue,
+                    unit: unit,
+                    month: month,
+                    number: idx + 1
+                });
+            });
+            
+            // Сортировка по месяцу и перенумерация
+            tranches.sort((a,b) => a.month - b.month);
+            tranches.forEach((t, idx) => {
+                t.number = idx + 1;
+                const item = document.getElementById(t.id);
+                if (item) {
+                    item.querySelector('.tranche-number').textContent = idx + 1;
+                }
+            });
+            
+            calculate();
+        }
+
+        function updateAddTrancheButton() {
+            if (tranches.length >= TRANSCHE_PARAMS.MAX_TRANCHES) {
+                addTrancheBtn.disabled = true;
+                addTrancheBtn.textContent = `Максимум ${TRANSCHE_PARAMS.MAX_TRANCHES} траншей`;
+            } else {
+                addTrancheBtn.disabled = false;
+                addTrancheBtn.textContent = `+ Добавить транш (${tranches.length}/${TRANSCHE_PARAMS.MAX_TRANCHES})`;
+            }
+        }
+
+        // Обновление отображения конкретного транша (сумма в поле и эквивалент)
+        function updateTrancheDisplay(tranche, finalPrice) {
+            const item = document.getElementById(tranche.id);
+            if (!item) return;
+            
+            const amountInput = item.querySelector('.tranche-amount-input');
+            const unitSelect = item.querySelector('.tranche-unit-select');
+            const equivalentSpan = item.querySelector('.tranche-equivalent');
+            
+            // Устанавливаем значение в поле ввода в зависимости от единиц
+            if (tranche.unit === TRANSCHE_UNITS.PERCENT) {
+                amountInput.value = tranche.rawValue.toFixed(1);
+                const rubAmount = Math.round((tranche.rawValue / 100) * finalPrice);
+                equivalentSpan.textContent = `≈ ${formatMoney(rubAmount)}`;
+            } else {
+                amountInput.value = Math.round(tranche.rawValue);
+                equivalentSpan.textContent = '';
+            }
+            
+            // Принудительно выставляем атрибуты
+            configureAmountInput(amountInput, tranche.unit);
+        }
+
+        // ========== Функции для программ ==========
+        function setManualMode() {
+            clearAllTranches();
+            addTranche(0, 1, TRANSCHE_UNITS.RUB, false);
+            updateAddTrancheButton();
+        }
+
+        function setProgram1() {
+            // 1. Устанавливаем дату ввода на октябрь 2027
+            completionDateInput.value = '2027-10';
+            updateCompletionInfo();
+            
+            // 2. Очищаем транши
+            clearAllTranches();
+            
+            // 3. Предварительный расчёт общей стоимости сделки без дисконта
+            const basePrice = currentBasePrice;
+            const repair = parseInt(repairCostInput.value) || 0;
+            const ddu = parseInt(dduObjectsCostInput.value) || 0;
+            const additionalDiscounts = getAdditionalDiscountsSum();
+            let preliminaryFinalPrice = basePrice - additionalDiscounts;
+            let preliminaryTotalCost = preliminaryFinalPrice + repair + ddu;
+            
+            // 4. Устанавливаем ПВ = 20.1% от preliminaryTotalCost
+            let downPaymentRub = Math.round(preliminaryTotalCost * 20.1 / 100);
+            downPaymentManualRub.value = downPaymentRub;
+            downPaymentSlider.value = 20;
+            downPaymentValue.textContent = '20%';
+            
+            // 5. Добавляем транши с отложенным обновлением
+            addTranche(10, 1, TRANSCHE_UNITS.PERCENT, true);  // skipUpdate = true
+            addTranche(20, 12, TRANSCHE_UNITS.PERCENT, true); // skipUpdate = true
+            
+            const july2027 = new Date(2027, 6, 1);
+            const today = new Date();
+            let monthDiff = (july2027.getFullYear() - today.getFullYear()) * 12 + (july2027.getMonth() - today.getMonth());
+            if (monthDiff < 1) monthDiff = 1;
+            addTranche(0, monthDiff, TRANSCHE_UNITS.RUB, true); // skipUpdate = true
+            
+            // Теперь, когда все транши созданы, запускаем обновление один раз
+            updateTranches();
+            updateAddTrancheButton();
+        }
+
+        function setProgram2() {
+            // 1. Устанавливаем дату ввода на октябрь 2027
+            completionDateInput.value = '2027-10';
+            updateCompletionInfo();
+            
+            // 2. Очищаем транши
+            clearAllTranches();
+            
+            // 3. Предварительный расчёт общей стоимости сделки без дисконта
+            const basePrice = currentBasePrice;
+            const repair = parseInt(repairCostInput.value) || 0;
+            const ddu = parseInt(dduObjectsCostInput.value) || 0;
+            const additionalDiscounts = getAdditionalDiscountsSum();
+            let preliminaryFinalPrice = basePrice - additionalDiscounts;
+            let preliminaryTotalCost = preliminaryFinalPrice + repair + ddu;
+            
+            // 4. Устанавливаем ПВ = 20.1% от preliminaryTotalCost
+            let downPaymentRub = Math.round(preliminaryTotalCost * 20.1 / 100);
+            downPaymentManualRub.value = downPaymentRub;
+            downPaymentSlider.value = 20;
+            downPaymentValue.textContent = '20%';
+            
+            // 5. Добавляем транши с отложенным обновлением
+            addTranche(20, 1, TRANSCHE_UNITS.PERCENT, true); // skipUpdate = true
+            
+            const july2027 = new Date(2027, 6, 1);
+            const today = new Date();
+            let monthDiff = (july2027.getFullYear() - today.getFullYear()) * 12 + (july2027.getMonth() - today.getMonth());
+            if (monthDiff < 1) monthDiff = 1;
+            addTranche(0, monthDiff, TRANSCHE_UNITS.RUB, true); // skipUpdate = true
+            
+            updateTranches();
+            updateAddTrancheButton();
+        }
+
+        // ========== Основной расчёт ==========
+        function calculate() {
+            if (!currentBasePrice || currentStatus === 'Продано') {
+                return;
+            }
+
+            // 1. Базовая цена квартиры
+            const basePrice = currentBasePrice;
+            
+            // 2. Дополнительные затраты
+            const repair = parseInt(repairCostInput.value) || 0;
+            const ddu = parseInt(dduObjectsCostInput.value) || 0;
+            const additional = repair + ddu;
+            
+            // 3. Первоначальный взнос (сумма)
+            let downPaymentRub = parseInt(downPaymentManualRub.value) || 0;
+            const downPaymentPercent = parseInt(downPaymentSlider.value);
+            
+            // 4. Сумма дополнительных скидок
+            const additionalDiscounts = getAdditionalDiscountsSum();
+            
+            // --- Предварительный расчёт для определения эффективного финансирования ---
+            let maxDiscount = basePrice * (TRANSCHE_PARAMS.MAX_DISCOUNT_PERCENT / 100);
+            
+            // Итерация 1: дисконт = 0
+            let finalPrice = basePrice;
+            let totalCost = finalPrice + additional;
+            
+            if (!downPaymentManualRub.value) {
+                downPaymentRub = Math.round(totalCost * downPaymentPercent / 100);
+                downPaymentManualRub.value = downPaymentRub;
+            }
+            
+            let effective = calculateEffectiveFinancing(downPaymentRub, tranches);
+            let effectiveRatio = totalCost > 0 ? effective / totalCost : 0;
+            effectiveRatio = Math.min(1, effectiveRatio);
+            
+            let developerDiscount = maxDiscount * effectiveRatio;
+            finalPrice = Math.max(0, basePrice - developerDiscount - additionalDiscounts);
+            totalCost = finalPrice + additional;
+            
+            // Итерация 2
+            if (!downPaymentManualRub.value) {
+                downPaymentRub = Math.round(totalCost * downPaymentPercent / 100);
+                downPaymentManualRub.value = downPaymentRub;
+            }
+            
+            effective = calculateEffectiveFinancing(downPaymentRub, tranches);
+            effectiveRatio = totalCost > 0 ? effective / totalCost : 0;
+            effectiveRatio = Math.min(1, effectiveRatio);
+            developerDiscount = maxDiscount * effectiveRatio;
+            finalPrice = Math.max(0, basePrice - developerDiscount - additionalDiscounts);
+            totalCost = finalPrice + additional;
+            
+            if (downPaymentManualRub.value) {
+                let calcPercent = Math.round((downPaymentRub / totalCost) * 100);
+                calcPercent = Math.min(50, Math.max(15, calcPercent));
+                downPaymentSlider.value = calcPercent;
+                downPaymentValue.textContent = calcPercent + '%';
+            } else {
+                downPaymentRub = Math.round(totalCost * downPaymentPercent / 100);
+                downPaymentManualRub.value = downPaymentRub;
+            }
+            downPaymentAmount.textContent = formatMoney(downPaymentRub);
+            
+            // ===== Пересчёт сумм траншей на основе итоговой цены =====
+            tranches.forEach(t => {
+                if (t.unit === TRANSCHE_UNITS.PERCENT) {
+                    t.amount = Math.round((t.rawValue / 100) * finalPrice);
+                } else {
+                    t.amount = Math.round(t.rawValue);
+                }
+            });
+            
+            const mortgageAmount = Math.max(0, totalCost - downPaymentRub);
+            let trancheSum = totalTranchesAmount(tranches);
+            
+            // Автокоррекция последнего транша под сумму кредита
+            if (tranches.length > 0) {
+                const last = tranches[tranches.length - 1];
+                if (trancheSum < mortgageAmount) {
+                    const diff = mortgageAmount - trancheSum;
+                    last.amount += diff;
+                    if (last.unit === TRANSCHE_UNITS.RUB) {
+                        last.rawValue = last.amount;
+                    } else {
+                        last.rawValue = (last.amount / finalPrice) * 100;
+                    }
+                    trancheSum = mortgageAmount;
+                    trancheBalanceWarning.style.display = 'none';
+                } else if (trancheSum > mortgageAmount) {
+                    const diff = trancheSum - mortgageAmount;
+                    last.amount = Math.max(0, last.amount - diff);
+                    if (last.unit === TRANSCHE_UNITS.RUB) {
+                        last.rawValue = last.amount;
+                    } else {
+                        last.rawValue = (last.amount / finalPrice) * 100;
+                    }
+                    trancheSum = totalTranchesAmount(tranches);
+                    trancheBalanceWarning.style.display = 'none';
+                }
+                
+                const lastInput = document.querySelector(`#${last.id} .tranche-amount-input`);
+                if (lastInput) {
+                    if (last.unit === TRANSCHE_UNITS.RUB) {
+                        lastInput.value = Math.round(last.rawValue);
+                    } else {
+                        lastInput.value = last.rawValue.toFixed(1);
+                    }
                 }
             }
             
-            // Если цена выше всех порогов, берем последний коэффициент
-            return complexCoeffs[complexCoeffs.length - 1].value;
-        }
-
-        // Функция проверки, является ли ЖК с фиксированным минимальным ПВ
-        function isFixedMinPaymentComplex(complex) {
-            return fixedMinPaymentComplexes.includes(complex);
-        }
-
-        // Функция расчета минимального ПВ клиента
-        function calculateMinClientPayment() {
-            // Если ЖК в списке с фиксированным минимальным ПВ, возвращаем 300 000 ₽
-            if (isFixedMinPaymentComplex(currentComplex)) {
-                return FIXED_MIN_PAYMENT;
+            if (mortgageAmount > 0 && tranches.length === 0) {
+                trancheBalanceWarning.style.display = 'block';
+                trancheBalanceWarning.textContent = '⚠️ Добавьте хотя бы один транш';
+            } else {
+                trancheBalanceWarning.style.display = 'none';
             }
             
-            // Для остальных ЖК считаем по коэффициенту
-            const repairCost = parseInt(repairCostInput.value) || 0;
-            const dduObjects = parseInt(dduObjectsInput.value) || 0;
-            const totalBase = currentBasePrice + repairCost + dduObjects;
-            const coefficient = getCoefficient(currentComplex, currentBasePrice);
+            // Повторный пересчёт эффективного финансирования с обновлёнными суммами траншей
+            effective = calculateEffectiveFinancing(downPaymentRub, tranches);
+            effectiveRatio = totalCost > 0 ? effective / totalCost : 0;
+            effectiveRatio = Math.min(1, effectiveRatio);
+            developerDiscount = maxDiscount * effectiveRatio;
+            finalPrice = Math.max(0, basePrice - developerDiscount - additionalDiscounts);
+            totalCost = finalPrice + additional;
+            const mortgageAmountFinal = Math.max(0, totalCost - downPaymentRub);
             
-            return Math.round(totalBase * coefficient);
+            // --- Обновление интерфейса ---
+            const maxDiscountPrice = calculateMaxDiscountPrice(basePrice) - additionalDiscounts;
+            basePriceDisplay.textContent = formatMoney(basePrice);
+            maxDiscountPriceDisplay.textContent = formatMoney(maxDiscountPrice);
+            
+            const discountPercent = ((developerDiscount / basePrice) * 100).toFixed(1);
+            resultDeveloperDiscount.textContent = `${formatMoney(developerDiscount)} (${discountPercent}%)`;
+            resultFinalPrice.textContent = formatMoney(finalPrice);
+            resultAdditionalCosts.textContent = formatMoney(additional);
+            resultTotalCost.textContent = formatMoney(totalCost);
+            resultDownPayment.textContent = formatMoney(downPaymentRub);
+            resultMortgageAmount.textContent = formatMoney(mortgageAmountFinal);
+            resultTotalTranches.textContent = formatMoney(trancheSum);
+            
+            effectiveFinancingAmount.textContent = formatMoney(effective);
+            effectiveFinancingPercent.textContent = `(${(effectiveRatio * 100).toFixed(1)}% от стоимости)`;
+            
+            // --- Обновление отображения всех траншей ---
+            tranches.forEach(t => updateTrancheDisplay(t, finalPrice));
+            
+            // --- Расчёт графика платежей ---
+            const annualRate = parseFloat(mortgageRateInput.value) || 0;
+            const rateMonthly = monthlyRate(annualRate);
+            const totalMonths = parseInt(mortgageTermInput.value) * 12;
+            
+            let schedule = [];
+            let currentDebt = 0;
+            let prevMonth = 0;
+            
+            const sortedTranches = [...tranches].sort((a,b) => a.month - b.month);
+            
+            for (let i = 0; i < sortedTranches.length; i++) {
+                const tranche = sortedTranches[i];
+                const trancheMonth = (i === 0) ? 0 : tranche.month;
+                
+                if (trancheMonth > prevMonth && currentDebt > 0) {
+                    const periodMonths = trancheMonth - prevMonth;
+                    const payment = annuityPayment(currentDebt, totalMonths - prevMonth, rateMonthly);
+                    const remaining = remainingBalance(currentDebt, totalMonths - prevMonth, rateMonthly, periodMonths);
+                    schedule.push({
+                        period: `${prevMonth}–${trancheMonth} мес`,
+                        debt: currentDebt,
+                        payment: payment,
+                        months: periodMonths,
+                        remaining: remaining
+                    });
+                    currentDebt = remaining;
+                }
+                
+                currentDebt += tranche.amount;
+                prevMonth = trancheMonth;
+            }
+            
+            if (prevMonth < totalMonths && currentDebt > 0) {
+                const periodMonths = totalMonths - prevMonth;
+                const payment = annuityPayment(currentDebt, totalMonths - prevMonth, rateMonthly);
+                schedule.push({
+                    period: `${prevMonth}–${totalMonths} мес`,
+                    debt: currentDebt,
+                    payment: payment,
+                    months: periodMonths,
+                    remaining: 0
+                });
+            }
+            
+            let totalPaymentsSum = 0;
+            let rows = '';
+            schedule.forEach(row => {
+                totalPaymentsSum += row.payment * row.months;
+                rows += `<tr>
+                    <td>${row.period}</td>
+                    <td>${formatMoney(row.debt)}</td>
+                    <td>${formatMoney(row.payment)}</td>
+                    <td>${row.months}</td>
+                    <td>${formatMoney(row.remaining)}</td>
+                </tr>`;
+            });
+            paymentScheduleBody.innerHTML = rows;
+            
+            // --- Вывод сообщений вместо таблицы (исключая последнюю строку) ---
+            if (paymentScheduleMessages) {
+                paymentScheduleMessages.innerHTML = ''; // очистка
+                // Исключаем последний элемент (где remaining = 0)
+                const displaySchedule = schedule.slice(0, -1);
+                displaySchedule.forEach(item => {
+                    const msg = document.createElement('div');
+                    msg.textContent = `В период ${item.period} ежемесячный платеж ${formatMoney(item.payment)}`;
+                    paymentScheduleMessages.appendChild(msg);
+                });
+            }
+            
+            const overpayment = totalPaymentsSum - mortgageAmountFinal;
+            resultTotalPayments.textContent = formatMoney(totalPaymentsSum);
+            resultOverpayment.textContent = formatMoney(overpayment);
         }
 
-        // Загрузка данных из Google Таблицы
+        // ========== Загрузка данных из Google Sheets ==========
         async function loadApartmentsData() {
             try {
                 complexSelect.innerHTML = '<option value="">Загрузка...</option>';
                 const response = await fetch(SCRIPT_URL);
                 const data = await response.json();
-                
-                // Фильтруем только квартиры и исключаем статус "Субаренда (продано)"
-                // Теперь включаем проект "АСТРО"
                 apartmentsData = data.filter(item => {
                     const isApartment = item["Тип помещения"] && item["Тип помещения"].toLowerCase() === "квартира";
+                    const isNotAstro = item["Название ЖК"] && !item["Название ЖК"].toLowerCase().includes("астро");
+                    const isNotSchastie = item["Название ЖК"] && item["Название ЖК"] !== "Счастье";
                     const isNotSubRent = item["Статус"] !== "Субаренда (продано)";
-                    
-                    return isApartment && isNotSubRent;
+                    return isApartment && isNotAstro && isNotSchastie && isNotSubRent;
                 });
-                
                 populateComplexes();
             } catch (error) {
-                console.error('Ошибка загрузки данных:', error);
-                complexSelect.innerHTML = '<option value="">Ошибка загрузки данных</option>';
+                console.error('Ошибка загрузки:', error);
+                complexSelect.innerHTML = '<option value="">Ошибка загрузки</option>';
             }
         }
 
-        // Заполнение списка ЖК
         function populateComplexes() {
-            const complexes = [...new Set(apartmentsData.map(item => item["Название ЖК"]).filter(Boolean))];
+            const complexes = [...new Set(apartmentsData.map(i => i["Название ЖК"]).filter(Boolean))];
             complexSelect.innerHTML = '<option value="">Выберите ЖК</option>';
-            complexes.forEach(complex => {
-                const option = document.createElement('option');
-                option.value = complex;
-                option.textContent = complex;
-                complexSelect.appendChild(option);
+            complexes.forEach(c => {
+                const opt = document.createElement('option');
+                opt.value = c;
+                opt.textContent = c;
+                complexSelect.appendChild(opt);
             });
         }
 
-        // При изменении ЖК
+        // ========== Обработчики событий ==========
+        function initEventListeners() {
+            downPaymentSlider.addEventListener('input', function() {
+                downPaymentValue.textContent = this.value + '%';
+                downPaymentManualRub.value = '';
+                calculate();
+            });
+            downPaymentManualRub.addEventListener('input', calculate);
+            
+            mortgageRateInput.addEventListener('input', calculate);
+            mortgageTermInput.addEventListener('input', calculate);
+            
+            managerDiscountCheckbox.addEventListener('change', calculate);
+            realtorDiscountCheckbox.addEventListener('change', calculate);
+            
+            repairCostInput.addEventListener('input', calculate);
+            dduObjectsCostInput.addEventListener('input', calculate);
+            
+            completionDateInput.addEventListener('change', function() {
+                updateCompletionInfo();
+                calculate();
+            });
+            
+            addTrancheBtn.addEventListener('click', function() {
+                const maxMonth = getMaxTrancheMonth();
+                const defaultMonth = (tranches.length === 0) ? 1 : Math.min(maxMonth, (tranches[tranches.length-1]?.month || 1) + 3);
+                const defaultAmount = 0;
+                addTranche(defaultAmount, defaultMonth, TRANSCHE_UNITS.RUB, false);
+            });
+            
+            optionsToggle.addEventListener('click', function() {
+                optionsContent.classList.toggle('active');
+                optionsToggleIcon.classList.toggle('active');
+                optionsToggleIcon.textContent = optionsContent.classList.contains('active') ? '−' : '+';
+            });
+            
+            // Кнопки режимов траншей
+            manualModeBtn.addEventListener('click', function() {
+                setManualMode();
+                [manualModeBtn, program1Btn, program2Btn].forEach(btn => btn.classList.remove('active'));
+                manualModeBtn.classList.add('active');
+            });
+            
+            program1Btn.addEventListener('click', function() {
+                if (!currentBasePrice) {
+                    alert('Сначала выберите квартиру');
+                    return;
+                }
+                setProgram1();
+                [manualModeBtn, program1Btn, program2Btn].forEach(btn => btn.classList.remove('active'));
+                program1Btn.classList.add('active');
+            });
+            
+            program2Btn.addEventListener('click', function() {
+                if (!currentBasePrice) {
+                    alert('Сначала выберите квартиру');
+                    return;
+                }
+                setProgram2();
+                [manualModeBtn, program1Btn, program2Btn].forEach(btn => btn.classList.remove('active'));
+                program2Btn.classList.add('active');
+            });
+        }
+
+        function resetCalculation() {
+            clearAllTranches();
+            updateAddTrancheButton();
+            
+            downPaymentSlider.value = 20;
+            downPaymentValue.textContent = '20%';
+            downPaymentManualRub.value = 0;
+            repairCostInput.value = 0;
+            dduObjectsCostInput.value = 0;
+            mortgageRateInput.value = 21.7;
+            mortgageTermInput.value = 30;
+            managerDiscountCheckbox.checked = false;
+            realtorDiscountCheckbox.checked = false;
+            
+            // Сброс режима на ручной ввод
+            [manualModeBtn, program1Btn, program2Btn].forEach(btn => btn.classList.remove('active'));
+            manualModeBtn.classList.add('active');
+            
+            if (currentBasePrice > 0) {
+                setManualMode();
+            }
+            calculate();
+        }
+
+        // Обработчики выбора квартиры
         complexSelect.addEventListener('change', function() {
             const complex = this.value;
             sectionSelect.disabled = !complex;
@@ -499,24 +1487,26 @@
             soldNotice.style.display = 'none';
             apartmentFullDetails.style.display = 'none';
             resetCalculation();
-
+            
+            if (complex === 'ЧИСТЫЕ ПРУДЫ') {
+                realtorDiscountContainer.style.display = 'block';
+            } else {
+                realtorDiscountContainer.style.display = 'none';
+                realtorDiscountCheckbox.checked = false;
+            }
+            
             if (complex) {
-                const sections = [...new Set(apartmentsData
-                    .filter(item => item["Название ЖК"] === complex)
-                    .map(item => item["Название дома"])
-                    .filter(Boolean)
-                )];
+                const sections = [...new Set(apartmentsData.filter(i => i["Название ЖК"] === complex).map(i => i["Название дома"]).filter(Boolean))];
                 sectionSelect.innerHTML = '<option value="">Выберите дом</option>';
-                sections.forEach(section => {
-                    const option = document.createElement('option');
-                    option.value = section;
-                    option.textContent = section;
-                    sectionSelect.appendChild(option);
+                sections.forEach(s => {
+                    const opt = document.createElement('option');
+                    opt.value = s;
+                    opt.textContent = s;
+                    sectionSelect.appendChild(opt);
                 });
             }
         });
 
-        // При изменении дома
         sectionSelect.addEventListener('change', function() {
             const complex = complexSelect.value;
             const section = this.value;
@@ -525,312 +1515,98 @@
             soldNotice.style.display = 'none';
             apartmentFullDetails.style.display = 'none';
             resetCalculation();
-
+            
             if (complex && section) {
-                const apartments = apartmentsData
-                    .filter(item => 
-                        item["Название ЖК"] === complex && 
-                        item["Название дома"] === section
-                    )
-                    .map(item => ({
-                        number: item["Номер помещения"],
-                        basePrice: item["Цена"],
-                        discountPrice: item["Цена продажи"],
-                        complex: item["Название ЖК"],
-                        section: item["Название дома"],
-                        type: item["Тип помещения"],
-                        status: item["Статус"],
-                        roomType: item["Классическая комнатность"],
-                        area: item["Площадь, м2"],
-                        planUrl: item["3D тур квартиры"]
+                const apartments = apartmentsData.filter(i => i["Название ЖК"] === complex && i["Название дома"] === section)
+                    .map(i => ({
+                        number: i["Номер помещения"],
+                        basePrice: i["Цена"],
+                        complex: i["Название ЖК"],
+                        section: i["Название дома"],
+                        status: i["Статус"],
+                        roomType: i["Классическая комнатность"],
+                        area: i["Площадь, м2"],
+                        planUrl: i["3D тур квартиры"]
                     }));
-
                 apartmentSelect.innerHTML = '<option value="">Выберите квартиру</option>';
-                apartments.forEach(apartment => {
-                    const option = document.createElement('option');
-                    option.value = apartment.number;
-                    option.textContent = `Квартира ${apartment.number}`;
-                    option.dataset.basePrice = apartment.basePrice;
-                    option.dataset.discountPrice = apartment.discountPrice;
-                    option.dataset.complex = apartment.complex;
-                    option.dataset.section = apartment.section;
-                    option.dataset.status = apartment.status;
-                    option.dataset.roomType = apartment.roomType;
-                    option.dataset.area = apartment.area;
-                    option.dataset.planUrl = apartment.planUrl || '';
-                    apartmentSelect.appendChild(option);
+                apartments.forEach(a => {
+                    const opt = document.createElement('option');
+                    opt.value = a.number;
+                    opt.textContent = `Квартира ${a.number}`;
+                    opt.dataset.basePrice = a.basePrice;
+                    opt.dataset.complex = a.complex;
+                    opt.dataset.section = a.section;
+                    opt.dataset.status = a.status;
+                    opt.dataset.roomType = a.roomType;
+                    opt.dataset.area = a.area;
+                    opt.dataset.planUrl = a.planUrl;
+                    apartmentSelect.appendChild(opt);
                 });
             }
         });
 
-        // При изменении квартиры
         apartmentSelect.addEventListener('change', function() {
-            const selectedOption = this.options[this.selectedIndex];
+            const opt = this.options[this.selectedIndex];
             selectedApartmentInfo.style.display = 'none';
             soldNotice.style.display = 'none';
             apartmentFullDetails.style.display = 'none';
             resetCalculation();
-
-            if (selectedOption.value) {
-                currentBasePrice = parseInt(selectedOption.dataset.basePrice) || 0;
-                currentDiscountPrice = parseInt(selectedOption.dataset.discountPrice) || 0;
-                currentStatus = selectedOption.dataset.status || '';
-                currentComplex = selectedOption.dataset.complex;
-                currentSection = selectedOption.dataset.section;
-                currentApartmentNumber = selectedOption.value;
-                currentRoomType = selectedOption.dataset.roomType;
-                currentArea = selectedOption.dataset.area;
-                currentPlanUrl = selectedOption.dataset.planUrl;
-
-                // Проверяем статус квартиры
-                if (currentStatus === "Продано") {
+            
+            if (opt.value) {
+                currentBasePrice = parseInt(opt.dataset.basePrice) || 0;
+                currentStatus = opt.dataset.status || '';
+                currentComplex = opt.dataset.complex;
+                currentSection = opt.dataset.section;
+                currentApartmentNumber = opt.value;
+                currentRoomType = opt.dataset.roomType;
+                currentArea = opt.dataset.area;
+                currentPlanUrl = opt.dataset.planUrl;
+                
+                if (currentComplex === 'ЧИСТЫЕ ПРУДЫ') realtorDiscountContainer.style.display = 'block';
+                else realtorDiscountContainer.style.display = 'none';
+                
+                if (currentStatus === 'Продано') {
                     soldNotice.style.display = 'block';
                     return;
                 }
-
-                // Обновляем информацию о выбранной квартире
+                
                 apartmentDetails.innerHTML = `
                     <div>ЖК: ${currentComplex}</div>
                     <div>Дом: ${currentSection}</div>
                     <div>Квартира: ${currentApartmentNumber}</div>
                 `;
                 selectedApartmentInfo.style.display = 'block';
-
-                // Обновляем полную информацию о квартире в результатах
-                updateApartmentFullDetails();
-
-                // Обновляем отображение цен
-                updatePriceDisplay();
                 
+                apartmentComplex.textContent = `ЖК: ${currentComplex}`;
+                apartmentSection.textContent = `Дом: ${currentSection}`;
+                apartmentNumber.textContent = `Квартира: ${currentApartmentNumber}`;
+                apartmentRooms.textContent = `Комнатность: ${getRoomTypeText(parseInt(currentRoomType))}`;
+                apartmentArea.textContent = `Площадь: ${currentArea} м²`;
+                if (currentPlanUrl && currentPlanUrl.trim()) {
+                    apartmentPlan.innerHTML = `<a href="${currentPlanUrl}" target="_blank" class="plan-button">План квартиры</a>`;
+                } else {
+                    apartmentPlan.innerHTML = '';
+                }
+                apartmentFullDetails.style.display = 'block';
+                
+                addTrancheBtn.disabled = false;
+                setManualMode();
                 calculate();
             }
         });
 
-        // Функция обновления полной информации о квартире
-        function updateApartmentFullDetails() {
-            apartmentComplex.textContent = `Жилой комплекс: ${currentComplex}`;
-            apartmentSection.textContent = `Дом: ${currentSection}`;
-            apartmentNumber.textContent = `Квартира: ${currentApartmentNumber}`;
-            apartmentRooms.textContent = `Комнатность: ${getRoomTypeText(parseInt(currentRoomType))}`;
-            apartmentArea.textContent = `Площадь: ${currentArea} м²`;
-            
-            // Добавляем кнопку плана квартиры, если есть ссылка
-            if (currentPlanUrl && currentPlanUrl.trim() !== '') {
-                apartmentPlan.innerHTML = `<a href="${currentPlanUrl}" target="_blank" class="plan-button">План квартиры</a>`;
-            } else {
-                apartmentPlan.innerHTML = '';
-            }
-            
-            apartmentFullDetails.style.display = 'block';
-        }
-
-        // Функция обновления отображения цен
-        function updatePriceDisplay() {
-            basePriceDisplay.textContent = formatMoney(currentBasePrice);
-            // Цена со скидкой больше не отображается пользователю
-        }
-
-        // Функция получения скорректированной цены со скидкой (с учетом чекбокса)
-        function getAdjustedDiscountPrice() {
-            return floorsDiscountCheckbox.checked ? 
-                currentDiscountPrice : 
-                currentDiscountPrice + 200000; // Изменено с 100000 на 200000
-        }
-
-        // Функция форматирования чисел в денежный формат
-        function formatMoney(amount) {
-            return new Intl.NumberFormat('ru-RU').format(Math.round(amount)) + ' ₽';
-        }
-        
-        // Функция расчета стоимости договора для ДДУ
-        function calculateContractPrice() {
-            const adjustedDiscountPrice = getAdjustedDiscountPrice();
-            const repairCost = parseInt(repairCostInput.value) || 0;
-            const dduObjects = parseInt(dduObjectsInput.value) || 0;
-            const clientPV = parseInt(clientDownPaymentInput.value) || 0;
-            const forBank = bankDiscountCheckbox.checked;
-            
-            // Итеративный расчет стоимости договора
-            let contractPrice = adjustedDiscountPrice + repairCost + dduObjects;
-            let bankCommission = 0;
-            
-            // Выполняем несколько итераций для точного расчета
-            for (let i = 0; i < 10; i++) {
-                // Рассчитываем общий ПВ как минимум 20.1% от стоимости договора
-                // Используем Math.ceil для округления вверх, чтобы гарантировать не менее 20.1%
-                let totalPV = Math.ceil(contractPrice * 0.201);
-                
-                // Рассчитываем ПВ компании
-                let companyPV = totalPV - clientPV;
-                
-                // Рассчитываем тело кредита
-                let loanBody = contractPrice - totalPV;
-                
-                // Если для банка, добавляем комиссию банка 4,3% от тела кредита
-                if (forBank) {
-                    bankCommission = Math.round(loanBody * BANK_COMMISSION_RATE);
-                } else {
-                    bankCommission = 0;
-                }
-                
-                // Рассчитываем новую стоимость договора
-                let newContractPrice = adjustedDiscountPrice + repairCost + dduObjects + companyPV + companyPV * 0.05;
-                
-                // Если для банка, добавляем комиссию банка к стоимости договора
-                if (forBank) {
-                    newContractPrice += bankCommission;
-                }
-                
-                // Если разница меньше 1 рубля, выходим
-                if (Math.abs(newContractPrice - contractPrice) < 1) {
-                    break;
-                }
-                contractPrice = newContractPrice;
-            }
-            
-            return {
-                contractPrice: Math.round(contractPrice),
-                bankCommission: bankCommission
-            };
-        }
-        
-        // Функция расчета скидки на квартиру без учета ремонта
-        function calculateDiscountWithoutRepair(contractPrice) {
-            const repairCost = parseInt(repairCostInput.value) || 0;
-            const priceWithoutRepair = contractPrice - repairCost;
-            
-            if (priceWithoutRepair < currentBasePrice) {
-                return Math.ceil(currentBasePrice - priceWithoutRepair);
-            }
-            return 0;
-        }
-        
-        // Функция сброса расчетов
-        function resetCalculation() {
-            currentBasePrice = 0;
-            currentDiscountPrice = 0;
-            currentStatus = '';
-            updatePriceDisplay();
-            
-            resultContractPrice.textContent = formatMoney(0);
-            resultTotalPV.textContent = formatMoney(0);
-            resultCompanyPV.textContent = formatMoney(0);
-            resultClientPV.textContent = formatMoney(0);
-            resultLoanBody.textContent = formatMoney(0);
-            resultPVPercent.textContent = "0%";
-            resultBankCommission.textContent = formatMoney(0);
-            bankCommissionItem.style.display = 'none';
-            resultDiscountWithoutRepair.textContent = "Нет скидки";
-            resultDiscountWithoutRepair.className = "no-discount";
-            
-            minPaymentInfo.textContent = '';
-            paymentWarning.style.display = 'none';
-        }
-        
-        // Функция расчета
-        function calculate() {
-            if (currentStatus === "Продано") {
-                return; // Не проводим расчеты для проданных квартир
-            }
-            
-            const clientPV = parseInt(clientDownPaymentInput.value) || 0;
-            const forBank = bankDiscountCheckbox.checked;
-            
-            // Рассчитываем минимальный ПВ клиента
-            const minClientPayment = calculateMinClientPayment();
-            
-            // Обновляем информацию о минимальном платеже
-            if (isFixedMinPaymentComplex(currentComplex)) {
-                minPaymentInfo.textContent = `Минимальный первоначальный взнос: ${formatMoney(FIXED_MIN_PAYMENT)}`;
-            } else {
-                const coefficient = getCoefficient(currentComplex, currentBasePrice);
-                minPaymentInfo.textContent = `Минимальный первоначальный взнос: ${formatMoney(minClientPayment)}`;
-            }
-            
-            // Проверяем, достаточно ли ПВ клиента
-            if (clientPV < minClientPayment) {
-                paymentWarning.style.display = 'block';
-                const amountToAdd = minClientPayment - clientPV;
-                paymentWarning.textContent = `Первоначальный взнос клиента меньше минимального требуемого! Необходимо добавить еще ${formatMoney(amountToAdd)}`;
-                
-                // Сбрасываем результаты, если ПВ недостаточно
-                resultContractPrice.textContent = formatMoney(0);
-                resultTotalPV.textContent = formatMoney(0);
-                resultCompanyPV.textContent = formatMoney(0);
-                resultClientPV.textContent = formatMoney(clientPV);
-                resultLoanBody.textContent = formatMoney(0);
-                resultPVPercent.textContent = "0%";
-                resultBankCommission.textContent = formatMoney(0);
-                bankCommissionItem.style.display = 'none';
-                resultDiscountWithoutRepair.textContent = "Нет скидки";
-                resultDiscountWithoutRepair.className = "no-discount";
-                return;
-            } else {
-                paymentWarning.style.display = 'none';
-            }
-            
-            // Рассчитываем стоимость договора для ДДУ и комиссию банка
-            const calculationResult = calculateContractPrice();
-            const contractPrice = calculationResult.contractPrice;
-            const bankCommission = calculationResult.bankCommission;
-            
-            // Рассчитываем общий ПВ как минимум 20.1% от стоимости договора
-            // Используем Math.ceil для округления вверх
-            const totalPV = Math.ceil(contractPrice * 0.201);
-            const companyPV = totalPV - clientPV;
-            
-            // Рассчитываем тело кредита
-            // Если для банка, вычитаем комиссию банка из стоимости договора
-            const loanBody = contractPrice - totalPV;
-            
-            // Рассчитываем процент ПВ
-            const pvPercent = (totalPV / contractPrice * 100).toFixed(6);
-            
-            // Рассчитываем скидку на квартиру без учета ремонта
-            const discountWithoutRepair = calculateDiscountWithoutRepair(contractPrice);
-            
-            // Обновляем результаты
-            resultContractPrice.textContent = formatMoney(contractPrice);
-            resultTotalPV.textContent = formatMoney(totalPV);
-            resultCompanyPV.textContent = formatMoney(companyPV);
-            resultClientPV.textContent = formatMoney(clientPV);
-            resultLoanBody.textContent = formatMoney(loanBody);
-            resultPVPercent.textContent = `${pvPercent}%`;
-            
-            // Обновляем отображение комиссии банка
-            if (forBank) {
-                resultBankCommission.textContent = formatMoney(bankCommission);
-                bankCommissionItem.style.display = 'flex';
-            } else {
-                bankCommissionItem.style.display = 'none';
-            }
-            
-            // Обновляем отображение скидки
-            if (discountWithoutRepair > 0) {
-                resultDiscountWithoutRepair.textContent = formatMoney(discountWithoutRepair);
-                resultDiscountWithoutRepair.className = "discount";
-            } else {
-                resultDiscountWithoutRepair.textContent = "Нет скидки";
-                resultDiscountWithoutRepair.className = "no-discount";
-            }
-        }
-        
-        // Слушатели событий
-        floorsDiscountCheckbox.addEventListener('change', function() {
-            updatePriceDisplay();
-            calculate();
-        });
-        
-        bankDiscountCheckbox.addEventListener('change', function() {
-            calculate();
-        });
-        
-        repairCostInput.addEventListener('input', calculate);
-        dduObjectsInput.addEventListener('input', calculate);
-        clientDownPaymentInput.addEventListener('input', calculate);
-        
         // Инициализация
-        loadApartmentsData();
+        window.addEventListener('DOMContentLoaded', function() {
+            loadApartmentsData();
+            initEventListeners();
+            
+            const today = new Date();
+            const nextMonth = new Date(today.getFullYear(), today.getMonth()+1, 1);
+            completionDateInput.min = nextMonth.toISOString().slice(0,7);
+            const defaultCompletion = new Date(today.getFullYear()+1, today.getMonth(), 1);
+            completionDateInput.value = defaultCompletion.toISOString().slice(0,7);
+            updateCompletionInfo();
+        });
     </script>
 </body>
 </html>
