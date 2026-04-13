@@ -246,7 +246,7 @@
             padding: 10px;
             border-radius: 5px;
             margin: 10px 0;
-            display: none;
+            display: block;
             border: 1px solid var(--gainsboro);
         }
 
@@ -589,7 +589,16 @@
                             <label for="realtorDiscount">Скидка риелтора</label>
                         </div>
                         <div class="info-text">
-                            При включенной скидке риелтора цена уменьшается на 100 000 ₽ (только для ЖК "ЧИСТЫЕ ПРУДЫ")
+                            При включенной скидке риелтора цена уменьшается на 100 000 ₽
+                        </div>
+                    </div>
+                    <div id="flat15DiscountContainer" style="display: none;">
+                        <div class="checkbox-group">
+                            <input type="checkbox" id="flat15Discount">
+                            <label for="flat15Discount">Скидка 15%</label>
+                        </div>
+                        <div class="info-text">
+                            При включенной скидке цена уменьшается на 15% от базовой цены
                         </div>
                     </div>
                 </div>
@@ -750,6 +759,8 @@
         const managerDiscountCheckbox = document.getElementById('managerDiscount');
         const realtorDiscountContainer = document.getElementById('realtorDiscountContainer');
         const realtorDiscountCheckbox = document.getElementById('realtorDiscount');
+        const flat15DiscountCheckbox = document.getElementById('flat15Discount');
+        const flat15DiscountContainer = document.getElementById('flat15DiscountContainer');
         const optionsToggle = document.getElementById('optionsToggle');
         const optionsToggleIcon = document.getElementById('optionsToggleIcon');
         const optionsContent = document.getElementById('optionsContent');
@@ -829,6 +840,8 @@
             PERCENT: 'percent'
         };
 
+        const FLAT15_PROJECTS = ['Бодровский', 'Комсомольский'];
+
         // ========== Вспомогательные функции ==========
         function getRoomTypeText(roomType) {
             const types = {0: 'Студия', 1: '1-комнатная', 2: '2-комнатная', 3: '3-комнатная'};
@@ -853,8 +866,12 @@
         function getAdditionalDiscountsSum() {
             let sum = 0;
             if (managerDiscountCheckbox.checked) sum += 100000;
-            if (currentComplex === 'ЧИСТЫЕ ПРУДЫ' && realtorDiscountCheckbox.checked) sum += 100000;
+            if (realtorDiscountCheckbox.checked) sum += 100000;
             return sum;
+        }
+
+        function isFlat15Project() {
+            return FLAT15_PROJECTS.includes(currentComplex);
         }
 
         function calculateEffectiveFinancing(downPayment, tranches) {
@@ -1156,7 +1173,9 @@
             const additionalDiscounts = getAdditionalDiscountsSum();
             
             // --- Предварительный расчёт для определения эффективного финансирования ---
-            let maxDiscount = basePrice * (TRANSCHE_PARAMS.MAX_DISCOUNT_PERCENT / 100);
+            let maxDiscount = isFlat15Project()
+                ? basePrice * 0.15
+                : basePrice * (TRANSCHE_PARAMS.MAX_DISCOUNT_PERCENT / 100);
             
             // Итерация 1: дисконт = 0
             let finalPrice = basePrice;
@@ -1170,8 +1189,10 @@
             let effective = calculateEffectiveFinancing(downPaymentRub, tranches);
             let effectiveRatio = totalCost > 0 ? effective / totalCost : 0;
             effectiveRatio = Math.min(1, effectiveRatio);
-            
-            let developerDiscount = maxDiscount * effectiveRatio;
+
+            let developerDiscount = isFlat15Project()
+                ? (flat15DiscountCheckbox.checked ? basePrice * 0.15 : 0)
+                : maxDiscount * effectiveRatio;
             finalPrice = Math.max(0, basePrice - developerDiscount - additionalDiscounts);
             totalCost = finalPrice + additional;
             
@@ -1184,10 +1205,12 @@
             effective = calculateEffectiveFinancing(downPaymentRub, tranches);
             effectiveRatio = totalCost > 0 ? effective / totalCost : 0;
             effectiveRatio = Math.min(1, effectiveRatio);
-            developerDiscount = maxDiscount * effectiveRatio;
+            developerDiscount = isFlat15Project()
+                ? (flat15DiscountCheckbox.checked ? basePrice * 0.15 : 0)
+                : maxDiscount * effectiveRatio;
             finalPrice = Math.max(0, basePrice - developerDiscount - additionalDiscounts);
             totalCost = finalPrice + additional;
-            
+
             if (downPaymentManualRub.value) {
                 let calcPercent = Math.round((downPaymentRub / totalCost) * 100);
                 calcPercent = Math.min(50, Math.max(15, calcPercent));
@@ -1257,7 +1280,9 @@
             effective = calculateEffectiveFinancing(downPaymentRub, tranches);
             effectiveRatio = totalCost > 0 ? effective / totalCost : 0;
             effectiveRatio = Math.min(1, effectiveRatio);
-            developerDiscount = maxDiscount * effectiveRatio;
+            developerDiscount = isFlat15Project()
+                ? (flat15DiscountCheckbox.checked ? basePrice * 0.15 : 0)
+                : maxDiscount * effectiveRatio;
             finalPrice = Math.max(0, basePrice - developerDiscount - additionalDiscounts);
             totalCost = finalPrice + additional;
             const mortgageAmountFinal = Math.max(0, totalCost - downPaymentRub);
@@ -1278,7 +1303,8 @@
             
             effectiveFinancingAmount.textContent = formatMoney(effective);
             effectiveFinancingPercent.textContent = `(${(effectiveRatio * 100).toFixed(1)}% от стоимости)`;
-            
+            document.querySelector('.effective-financing').style.display = isFlat15Project() ? 'none' : 'block';
+
             // --- Обновление отображения всех траншей ---
             tranches.forEach(t => updateTrancheDisplay(t, finalPrice));
             
@@ -1403,7 +1429,8 @@
             
             managerDiscountCheckbox.addEventListener('change', calculate);
             realtorDiscountCheckbox.addEventListener('change', calculate);
-            
+            flat15DiscountCheckbox.addEventListener('change', calculate);
+
             repairCostInput.addEventListener('input', calculate);
             dduObjectsCostInput.addEventListener('input', calculate);
             
@@ -1466,7 +1493,8 @@
             mortgageTermInput.value = 30;
             managerDiscountCheckbox.checked = false;
             realtorDiscountCheckbox.checked = false;
-            
+            flat15DiscountCheckbox.checked = false;
+
             // Сброс режима на ручной ввод
             [manualModeBtn, program1Btn, program2Btn].forEach(btn => btn.classList.remove('active'));
             manualModeBtn.classList.add('active');
@@ -1487,14 +1515,11 @@
             soldNotice.style.display = 'none';
             apartmentFullDetails.style.display = 'none';
             resetCalculation();
-            
-            if (complex === 'ЧИСТЫЕ ПРУДЫ') {
-                realtorDiscountContainer.style.display = 'block';
-            } else {
-                realtorDiscountContainer.style.display = 'none';
-                realtorDiscountCheckbox.checked = false;
-            }
-            
+
+            const isFlat15 = FLAT15_PROJECTS.includes(complex);
+            flat15DiscountContainer.style.display = isFlat15 ? 'block' : 'none';
+            if (!isFlat15) flat15DiscountCheckbox.checked = false;
+
             if (complex) {
                 const sections = [...new Set(apartmentsData.filter(i => i["Название ЖК"] === complex).map(i => i["Название дома"]).filter(Boolean))];
                 sectionSelect.innerHTML = '<option value="">Выберите дом</option>';
@@ -1561,10 +1586,11 @@
                 currentRoomType = opt.dataset.roomType;
                 currentArea = opt.dataset.area;
                 currentPlanUrl = opt.dataset.planUrl;
-                
-                if (currentComplex === 'ЧИСТЫЕ ПРУДЫ') realtorDiscountContainer.style.display = 'block';
-                else realtorDiscountContainer.style.display = 'none';
-                
+
+                const isFlat15 = isFlat15Project();
+                flat15DiscountContainer.style.display = isFlat15 ? 'block' : 'none';
+                if (!isFlat15) flat15DiscountCheckbox.checked = false;
+
                 if (currentStatus === 'Продано') {
                     soldNotice.style.display = 'block';
                     return;
