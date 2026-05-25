@@ -591,6 +591,14 @@
                         <div class="info-text">
                             При включенной скидке риелтора цена уменьшается на 100 000 ₽
                         </div>
+                    </div>                    <div class="realtor-discount">
+                        <div class="checkbox-group">
+                            <input type="checkbox" id="etajiDiscount">
+                            <label for="etajiDiscount">Скидка 1,5% для агентов ЭТАЖИ</label>
+                        </div>
+                        <div class="info-text">
+                            При включенной скидке отнимает 1,5% от стоимости квартиры дополнительно к купону
+                        </div>
                     </div>
                     <div id="flat15DiscountContainer" style="display: none;">
                         <div class="checkbox-group">
@@ -759,6 +767,7 @@
         const managerDiscountCheckbox = document.getElementById('managerDiscount');
         const realtorDiscountContainer = document.getElementById('realtorDiscountContainer');
         const realtorDiscountCheckbox = document.getElementById('realtorDiscount');
+        const etajiDiscountCheckbox = document.getElementById('etajiDiscount');
         const flat15DiscountCheckbox = document.getElementById('flat15Discount');
         const flat15DiscountContainer = document.getElementById('flat15DiscountContainer');
         const optionsToggle = document.getElementById('optionsToggle');
@@ -867,6 +876,7 @@
             let sum = 0;
             if (managerDiscountCheckbox.checked) sum += 100000;
             if (realtorDiscountCheckbox.checked) sum += 100000;
+            if (etajiDiscountCheckbox.checked) sum += currentBasePrice * 0.015;
             return sum;
         }
 
@@ -1429,6 +1439,7 @@
             
             managerDiscountCheckbox.addEventListener('change', calculate);
             realtorDiscountCheckbox.addEventListener('change', calculate);
+            etajiDiscountCheckbox.addEventListener('change', calculate);
             flat15DiscountCheckbox.addEventListener('change', calculate);
 
             repairCostInput.addEventListener('input', calculate);
@@ -1494,6 +1505,7 @@
             managerDiscountCheckbox.checked = false;
             realtorDiscountCheckbox.checked = false;
             flat15DiscountCheckbox.checked = false;
+            etajiDiscountCheckbox.checked = false;
 
             // Сброс режима на ручной ввод
             [manualModeBtn, program1Btn, program2Btn].forEach(btn => btn.classList.remove('active'));
@@ -1519,6 +1531,7 @@
             const isFlat15 = FLAT15_PROJECTS.includes(complex);
             flat15DiscountContainer.style.display = isFlat15 ? 'block' : 'none';
             if (!isFlat15) flat15DiscountCheckbox.checked = false;
+            etajiDiscountCheckbox.checked = false;
 
             if (complex) {
                 const sections = [...new Set(apartmentsData.filter(i => i["Название ЖК"] === complex).map(i => i["Название дома"]).filter(Boolean))];
@@ -1590,6 +1603,7 @@
                 const isFlat15 = isFlat15Project();
                 flat15DiscountContainer.style.display = isFlat15 ? 'block' : 'none';
                 if (!isFlat15) flat15DiscountCheckbox.checked = false;
+            etajiDiscountCheckbox.checked = false;
 
                 if (currentStatus === 'Продано') {
                     soldNotice.style.display = 'block';
